@@ -2,14 +2,16 @@ package com.example.locationdemo.CustomRecycleView
 
 import android.app.ProgressDialog.show
 import android.content.Context
+import android.view.Gravity
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.Toast
 import androidx.recyclerview.widget.RecyclerView
 import com.example.locationdemo.R
+import java.io.Serializable
 
-class CustomRecycleViewAdapter: RecyclerView.Adapter<CustomViewHolder> {
+class CustomRecycleViewAdapter: RecyclerView.Adapter<CustomViewHolder> ,Serializable{
     var list:List<LocationDataModel> = emptyList()
     lateinit var context:Context
 

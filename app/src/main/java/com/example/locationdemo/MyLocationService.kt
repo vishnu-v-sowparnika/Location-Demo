@@ -5,21 +5,35 @@ import android.app.Service
 import android.content.Context
 import android.content.Intent
 import android.location.LocationManager
+import android.os.Binder
 import android.os.IBinder
 import android.util.Log
 import android.widget.Toast
+import com.example.locationdemo.CustomRecycleView.CustomRecycleViewAdapter
+import com.example.locationdemo.CustomRecycleView.DataUpdater
+import com.example.locationdemo.CustomRecycleView.LocationDataModel
+import java.io.Serializable
 import java.math.BigInteger
 
 class MyLocationService : Service() {
     var locationmanager: LocationManager? = null
-    var locationlistner : MyListener?=null
+    lateinit var locationlistener:MyListener
+    var binder:LocalBinder ?=null
+    lateinit var dataUpdater:MyListener
+    var list:ArrayList<LocationDataModel> ?= null
+    var Adapter:CustomRecycleViewAdapter ?= null
     companion object{
-        val INTERVAL=10000.toLong()
+        val INTERVAL=1000.toLong()
         val DISTANCE=1.toFloat()
+    }
+    init {
+        binder=LocalBinder()
+        locationlistener=MyListener()
     }
 
     override fun onBind(intent: Intent?): IBinder? {
-        TODO("not implemented") //To change body of created functions use File | Settings | File Templates.
+
+        return binder
     }
 
     override fun onStartCommand(intent: Intent?, flags: Int, startId: Int): Int {
@@ -27,7 +41,7 @@ class MyLocationService : Service() {
         Toast.makeText(applicationContext,"Service Start", Toast.LENGTH_LONG).show()
 
         try {
-            locationmanager?.requestLocationUpdates(LocationManager.GPS_PROVIDER, INTERVAL, DISTANCE,locationlistner)
+            locationmanager?.requestLocationUpdates(LocationManager.GPS_PROVIDER, INTERVAL, DISTANCE,locationlistener)
         } catch (e: Exception) {
             Log.i("Service Exception",e.message)
         }
@@ -39,7 +53,7 @@ class MyLocationService : Service() {
         super.onCreate()
         Log.i("MyService","Service Created")
         locationmanager=applicationContext.getSystemService(Context.LOCATION_SERVICE) as LocationManager
-        locationlistner= MyListener()
+
     }
 
     override fun onDestroy() {
@@ -48,7 +62,9 @@ class MyLocationService : Service() {
         Log.i("MyService","Service Destroyed")
     }
 
-
+    inner class LocalBinder():Binder(){
+        fun getService():MyLocationService=this@MyLocationService
+    }
 }
 
 
